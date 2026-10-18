@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Actions Playground</title>
+  <style>
+    :root { --bg:#0f1117; --fg:#e6e6e6; --accent:#7ee787; --muted:#8b949e; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center;
+           background:var(--bg); color:var(--fg); font-family:system-ui,sans-serif; }
+    main { padding:2rem; max-width:36rem; }
+    h1 { color:var(--accent); margin:0 0 .5rem; }
+    dl { display:grid; grid-template-columns:auto 1fr; gap:.4rem 1rem; }
+    dt { color:var(--muted); }
+    code { font-family:ui-monospace,monospace; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>🚀 Deployed by GitHub Actions</h1>
+    <p>このページは Lesson 07 のワークフローがビルド＆デプロイしました。</p>
+    <dl>
+      <dt>Commit</dt><dd><code>{{SHA}}</code></dd>
+      <dt>Run #</dt><dd><code>{{RUN_NUMBER}}</code></dd>
+      <dt>Built at</dt><dd>{{BUILT_AT}}</dd>
+    </dl>
+    <p><a href="STATUS.md" style="color:var(--accent)">STATUS.md を見る</a></p>
+  </main>
+</body>
+</html>

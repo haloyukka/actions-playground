@@ -1,0 +1,29 @@
+name: My 05 Matrix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  both:
+    name: TODO(ジョブ名に Python と Node のバージョンを入れる)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: python と node の値を並べる
+        # TODO: Python 3.12 × Node 20 を除外する
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: TODO
+      - uses: actions/setup-node@v7
+        with:
+          node-version: TODO
+      - run: python --version && node --version
+      - name: Python テスト
+        working-directory: python
+        run: pip install -r requirements-dev.txt && pytest -q
+      - name: Node テスト
+        working-directory: node
+        run: npm ci && npm test

@@ -1,0 +1,22 @@
+# このファイルを .github/actions/greet/action.yml に置く
+name: Greet
+description: 名前を受け取ってあいさつする
+inputs:
+  who:
+    description: あいさつする相手
+    required: true
+outputs:
+  message:
+    description: あいさつ文
+    value: ${{ steps.say.outputs.message }}
+runs:
+  using: composite
+  steps:
+    - id: say
+      shell: bash
+      env:
+        WHO: ${{ inputs.who }}
+      run: |
+        msg="Hello, ${WHO}!"
+        echo "$msg"
+        echo "message=$msg" >> "$GITHUB_OUTPUT"

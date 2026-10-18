@@ -1,0 +1,26 @@
+name: My 06 Heartbeat
+
+on:
+  schedule:
+    - cron: "30 23 * * 0" # 日曜 23:30 UTC = 月曜 8:30 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 時刻を書き込む
+        run: TZ=Asia/Tokyo date "+%F %T JST" > practice/heartbeat.txt
+
+      - name: コミット＆push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add practice/heartbeat.txt
+          git commit -m "chore: heartbeat"
+          git push

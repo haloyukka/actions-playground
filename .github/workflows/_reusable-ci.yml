@@ -1,0 +1,38 @@
+# Lesson 10: 再利用可能ワークフロー（呼ばれる側）
+# 先頭の _ は「直接は動かさない部品」という目印（ただの命名ルール）
+name: Reusable CI
+
+on:
+  workflow_call:
+    inputs:
+      language:
+        description: "python または node"
+        required: true
+        type: string
+    outputs:
+      summary:
+        description: "結果の一言"
+        value: ${{ jobs.run.outputs.summary }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    outputs:
+      summary: ${{ steps.done.outputs.summary }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-both # 自作の composite action
+      - name: Python
+        if: inputs.language == 'python'
+        working-directory: python
+        run: |
+          pip install -r requirements-dev.txt
+          pytest -q
+      - name: Node
+        if: inputs.language == 'node'
+        working-directory: node
+        run: |
+          npm ci
+          npm test
+      - id: done
+        run: echo "summary=${{ inputs.language }} OK" >> "$GITHUB_OUTPUT"

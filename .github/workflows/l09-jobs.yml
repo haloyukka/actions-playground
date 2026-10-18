@@ -1,0 +1,59 @@
+# Lesson 09: ジョブの連携（needs / outputs / artifacts / if）
+name: L09 Job Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      make_it_fail:
+        description: "test ジョブをわざと失敗させる"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }} # ジョブの出力として公開
+    steps:
+      - id: ver
+        run: echo "version=1.0.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+      - name: 成果物を作る
+        run: |
+          mkdir -p out
+          echo "build ${{ steps.ver.outputs.version }} at $(date -u +%FT%TZ)" > out/build.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: build-output
+          path: out/
+          retention-days: 3
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: build-output
+          path: out
+      - name: 成果物を検証
+        run: |
+          cat out/build.txt
+          grep -q "${{ needs.build.outputs.version }}" out/build.txt
+      - name: (任意) わざと失敗
+        if: inputs.make_it_fail
+        run: exit 1
+
+  report:
+    needs: [build, test]
+    if: always() # 前のジョブが失敗しても実行する
+    runs-on: ubuntu-latest
+    steps:
+      - name: 結果をまとめる
+        run: |
+          echo "## パイプライン結果" >> "$GITHUB_STEP_SUMMARY"
+          echo "- version: ${{ needs.build.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- build: ${{ needs.build.result }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- test: ${{ needs.test.result }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: 失敗していたら知らせる
+        if: needs.test.result == 'failure'
+        run: echo "::warning title=Test failed::test ジョブが失敗しました"

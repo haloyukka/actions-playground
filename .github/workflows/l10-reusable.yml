@@ -1,0 +1,24 @@
+# Lesson 10: 再利用（reusable workflow と composite action）
+name: L10 Reusable
+
+on:
+  workflow_dispatch:
+
+jobs:
+  python:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      language: python
+
+  node:
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      language: node
+
+  summary:
+    needs: [python, node]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "${{ needs.python.outputs.summary }}"
+          echo "${{ needs.node.outputs.summary }}"

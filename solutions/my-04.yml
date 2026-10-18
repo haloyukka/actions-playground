@@ -1,0 +1,25 @@
+name: My 04 Node CI
+
+on:
+  pull_request:
+    paths: ["node/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: node/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test

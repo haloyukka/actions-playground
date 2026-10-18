@@ -1,0 +1,23 @@
+name: My 08 Slash Command
+
+on:
+  # TODO: Issue へのコメント作成で動かす
+
+permissions:
+  issues: write
+
+jobs:
+  hello:
+    # TODO: コメント本文が /hello で始まり、かつ投稿者が bot でないときだけ
+    if: TODO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const comment = context.payload.comment;
+            // TODO: コメントに 👋 (content: "wave") のリアクションを付ける
+            //   github.rest.reactions.createForIssueComment({ ...context.repo, comment_id, content })
+
+            // TODO: 「こんにちは、@ユーザー名 さん！」と返信する
+            //   github.rest.issues.createComment({ ...context.repo, issue_number, body })

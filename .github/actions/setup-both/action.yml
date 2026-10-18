@@ -1,0 +1,24 @@
+# Lesson 10: composite action（複数ステップを1つの部品にまとめる）
+name: Setup Python and Node
+description: Python と Node をまとめてセットアップする
+inputs:
+  python-version:
+    description: Python のバージョン
+    default: "3.13"
+  node-version:
+    description: Node のバージョン
+    default: "22"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v7
+      with:
+        python-version: ${{ inputs.python-version }}
+    - uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: バージョン表示
+      shell: bash # composite の run には shell 指定が必須
+      run: |
+        python --version
+        node --version

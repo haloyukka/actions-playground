@@ -1,0 +1,19 @@
+name: Greet
+description: 名前を受け取ってあいさつする
+inputs:
+  who:
+    description: あいさつする相手
+    # TODO: 必須にする
+outputs:
+  message:
+    description: あいさつ文
+    value: TODO # 下のステップ(id: say)の出力 message を返す
+runs:
+  using: composite
+  steps:
+    - id: say
+      # TODO: composite で必須の指定
+      run: |
+        msg="Hello, ${{ inputs.who }}!"
+        echo "$msg"
+        # TODO: msg を出力 message に書く

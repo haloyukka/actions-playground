@@ -1,0 +1,13 @@
+# Lesson 08: actions/labeler の設定（変更ファイル → ラベル）
+python:
+  - changed-files:
+      - any-glob-to-any-file: "python/**"
+node:
+  - changed-files:
+      - any-glob-to-any-file: "node/**"
+workflow:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+docs:
+  - changed-files:
+      - any-glob-to-any-file: ["**/*.md"]

@@ -1,0 +1,32 @@
+name: My 05 Matrix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  both:
+    name: py${{ matrix.python }} / node${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13"]
+        node: [20, 22]
+        exclude:
+          - python: "3.12"
+            node: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - run: python --version && node --version
+      - name: Python テスト
+        working-directory: python
+        run: pip install -r requirements-dev.txt && pytest -q
+      - name: Node テスト
+        working-directory: node
+        run: npm ci && npm test

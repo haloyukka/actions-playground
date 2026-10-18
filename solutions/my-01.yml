@@ -1,0 +1,23 @@
+name: My 01 Hello
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 実行した人を表示
+        run: echo "実行した人は ${{ github.actor }} です"
+
+      - name: 曜日を出力に入れる
+        id: today
+        run: echo "weekday=$(date +%A)" >> "$GITHUB_OUTPUT"
+
+      - name: 曜日を表示
+        run: echo "今日は ${{ steps.today.outputs.weekday }} です"
+
+      - name: サマリーを書く
+        run: |
+          echo "## 今日の一言" >> "$GITHUB_STEP_SUMMARY"
+          echo "YAML のインデントはスペース2つ。" >> "$GITHUB_STEP_SUMMARY"

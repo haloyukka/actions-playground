@@ -1,0 +1,23 @@
+name: My 02 Triggers
+
+on:
+  push:
+    branches: [main]
+    paths: ["practice/*.txt"]
+  workflow_dispatch:
+    inputs:
+      mood:
+        description: "今の気分"
+        type: choice
+        options: [happy, sleepy]
+        default: happy
+
+jobs:
+  mood:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "event = ${{ github.event_name }}, mood = ${{ inputs.mood }}"
+
+      - name: 眠いときだけ
+        if: inputs.mood == 'sleepy'
+        run: echo "☕ コーヒーを淹れよう"

@@ -1,0 +1,52 @@
+# Lesson 02: トリガー（on:）とフィルター
+name: L02 Triggers
+
+on:
+  push:
+    branches: [main]
+    paths: ["practice/**"] # practice/ 配下が変わった push だけで動く
+  pull_request:
+    paths: ["practice/**"]
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "ログの詳しさ"
+        type: choice
+        options: [normal, verbose]
+        default: normal
+      dry_run:
+        description: "ドライラン"
+        type: boolean
+        default: true
+
+jobs:
+  show:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 何で起動された？
+        run: echo "event = ${{ github.event_name }}"
+
+      - name: push のときだけ
+        if: github.event_name == 'push'
+        env:
+          # 外部から入る文字列は env 経由で渡す（スクリプトインジェクション対策）
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          echo "push されたコミット: ${{ github.sha }}"
+          echo "コミットメッセージ: ${MESSAGE}"
+
+      - name: pull_request のときだけ
+        if: github.event_name == 'pull_request'
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: echo "PR #${{ github.event.pull_request.number }}「${TITLE}」"
+
+      - name: 手動実行の入力値
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "level   = ${{ inputs.level }}"
+          echo "dry_run = ${{ inputs.dry_run }}"
+
+      - name: verbose のときだけ詳しく
+        if: inputs.level == 'verbose'
+        run: env | sort

@@ -1,0 +1,44 @@
+# Lesson 08: Issue / PR の自動操作
+name: L08 Issue & PR Automation
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target: # フォークからのPRでもラベルを付けられる（コードはcheckoutしない）
+    types: [opened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  welcome-issue:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: ラベルを付けてコメントする
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = ["triage"];
+            if (/bug|バグ|不具合/i.test(issue.title)) labels.push("bug");
+
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: issue.number,
+              labels,
+            });
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: issue.number,
+              body: `👋 @${issue.user.login} さん、Issue ありがとう！\n付けたラベル: ${labels.map(l => "`" + l + "`").join(", ")}`,
+            });
+
+  label-pr:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 変更ファイルに応じてラベルを付ける
+        uses: actions/labeler@v7 # 設定は .github/labeler.yml

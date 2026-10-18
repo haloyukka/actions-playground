@@ -1,0 +1,24 @@
+name: My 03 Python CI
+
+on:
+  pull_request:
+    paths: ["python/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      # TODO: リポジトリのコードを取得する Action を使う
+
+      # TODO: Python 3.13 をセットアップ（pip キャッシュも有効に）
+
+      - name: 依存をインストール
+        run: pip install -r requirements-dev.txt
+
+      # TODO: ruff でLint
+
+      # TODO: pytest でテスト

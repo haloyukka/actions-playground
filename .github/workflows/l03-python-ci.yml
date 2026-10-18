@@ -1,0 +1,37 @@
+# Lesson 03: Python の CI（Lint + テスト）
+name: L03 Python CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["python/**", ".github/workflows/l03-python-ci.yml"]
+  pull_request:
+    paths: ["python/**", ".github/workflows/l03-python-ci.yml"]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python # run: の実行ディレクトリを固定
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip # 依存のダウンロードをキャッシュして高速化
+          cache-dependency-path: python/requirements-dev.txt
+
+      - name: 依存をインストール
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check --output-format=github . # PRの差分に注釈が付く
+
+      - name: フォーマットチェック
+        run: ruff format --check .
+
+      - name: テスト (pytest)
+        run: pytest -v

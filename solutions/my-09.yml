@@ -1,0 +1,37 @@
+name: My 09 Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - run: seq 1 $(( RANDOM % 100 + 1 )) > lines.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: lines
+          path: lines.txt
+
+  count:
+    needs: generate
+    runs-on: ubuntu-latest
+    outputs:
+      lines: ${{ steps.c.outputs.lines }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: lines
+      - id: c
+        run: echo "lines=$(wc -l < lines.txt)" >> "$GITHUB_OUTPUT"
+      - run: echo "行数は ${{ steps.c.outputs.lines }}"
+      - name: 50行より多ければ失敗
+        if: fromJSON(steps.c.outputs.lines) > 50
+        run: exit 1
+
+  notify:
+    needs: count
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::error::行数が多すぎました (${{ needs.count.outputs.lines }} 行)"

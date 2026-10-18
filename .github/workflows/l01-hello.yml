@@ -1,0 +1,46 @@
+# Lesson 01: はじめてのワークフロー
+# Actions タブ → "L01 Hello Actions" → "Run workflow" で手動実行できます。
+name: L01 Hello Actions
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "あいさつする相手"
+        default: "Halo"
+        type: string
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    env:
+      GREETING: こんにちは # ジョブ全体で使える環境変数
+    steps:
+      - name: あいさつ
+        run: echo "${GREETING}, ${{ inputs.name }} さん！"
+
+      - name: コンテキストを覗いてみる
+        run: |
+          echo "イベント名  : ${{ github.event_name }}"
+          echo "実行した人  : ${{ github.actor }}"
+          echo "リポジトリ  : ${{ github.repository }}"
+          echo "ブランチ    : ${{ github.ref_name }}"
+          echo "ランナーOS  : ${{ runner.os }}"
+
+      - name: 次のステップへ値を渡す
+        id: dice
+        run: echo "number=$(( RANDOM % 6 + 1 ))" >> "$GITHUB_OUTPUT"
+
+      - name: 受け取った値を使う
+        run: echo "サイコロの目は ${{ steps.dice.outputs.number }} でした"
+
+      - name: 実行結果ページにサマリーを書く
+        run: |
+          {
+            echo "## 👋 Hello, ${{ inputs.name }}!"
+            echo ""
+            echo "| 項目 | 値 |"
+            echo "| --- | --- |"
+            echo "| event | \`${{ github.event_name }}\` |"
+            echo "| dice | ${{ steps.dice.outputs.number }} |"
+          } >> "$GITHUB_STEP_SUMMARY"

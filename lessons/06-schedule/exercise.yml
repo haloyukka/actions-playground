@@ -1,0 +1,23 @@
+name: My 06 Heartbeat
+
+on:
+  schedule:
+    - cron: "TODO" # 毎週月曜 日本時間 8:30（UTCに直す！）
+  workflow_dispatch:
+
+# TODO: コミットを push できる権限を与える
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 時刻を書き込む
+        run: TODO # practice/heartbeat.txt に日本時間を書く
+
+      - name: コミット＆push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # TODO: add → commit → push

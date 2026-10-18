@@ -1,0 +1,23 @@
+name: My 01 Hello
+
+on:
+  # TODO: 手動実行できるトリガーを書く
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 実行した人を表示
+        run: echo "実行した人は TODO(github コンテキストから actor を読む) です"
+
+      - name: 曜日を出力に入れる
+        id: today
+        # TODO: date +%A の結果を "weekday" という名前で GITHUB_OUTPUT に書く
+        run: echo "TODO"
+
+      - name: 曜日を表示
+        run: echo "今日は TODO(上のステップの出力を読む) です"
+
+      - name: サマリーを書く
+        # TODO: GITHUB_STEP_SUMMARY に "## 今日の一言" と好きな一言を書く
+        run: echo "TODO"

@@ -1,0 +1,51 @@
+# Lesson 05: matrix で複数バージョン・複数言語を並列実行
+name: L05 Matrix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  python:
+    name: Python ${{ matrix.python }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false # 1つ落ちても他は最後まで走らせる
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13"]
+        exclude:
+          - os: windows-latest # Windows は最新だけで十分、という例
+            python: "3.11"
+          - os: windows-latest
+            python: "3.12"
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+
+  node:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22, 24]
+        include:
+          - node: 24
+            experimental: true # 特定の組み合わせだけに値を足す
+    continue-on-error: ${{ matrix.experimental == true }}
+    defaults:
+      run:
+        working-directory: node
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm test

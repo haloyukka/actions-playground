@@ -1,0 +1,21 @@
+name: My 02 Triggers
+
+on:
+  push:
+    branches: [main]
+    # TODO: practice/ の .txt ファイルだけに反応させる
+  workflow_dispatch:
+    inputs:
+      mood:
+        description: "今の気分"
+        # TODO: happy / sleepy を選べる選択式にする（既定は happy）
+
+jobs:
+  mood:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "event = ${{ github.event_name }}, mood = ${{ inputs.mood }}"
+
+      - name: 眠いときだけ
+        # TODO: mood が sleepy のときだけ動く条件を書く
+        run: echo "☕ コーヒーを淹れよう"

@@ -1,0 +1,23 @@
+name: My 04 Node CI
+
+on:
+  pull_request:
+    paths: ["node/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node
+    steps:
+      - uses: actions/checkout@v7
+
+      # TODO: Node 22 をセットアップ（npm キャッシュ、lock は node/package-lock.json）
+
+      # TODO: lock ファイル通りに依存をインストール
+
+      # TODO: Lint
+
+      # TODO: テスト

@@ -1,0 +1,24 @@
+name: My 10 Composite
+
+on:
+  workflow_dispatch:
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      # TODO: ローカルの action を使うには、まず何が必要？
+
+      - id: a
+        uses: TODO # .github/actions/greet を使う
+        with:
+          who: Halo
+
+      - id: b
+        uses: TODO
+        with:
+          who: GitHub Actions
+
+      - run: |
+          echo "1回目: TODO"
+          echo "2回目: TODO"

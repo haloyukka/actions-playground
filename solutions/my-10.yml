@@ -1,0 +1,24 @@
+name: My 10 Composite
+
+on:
+  workflow_dispatch:
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7 # ローカル action を使うには checkout が必要
+
+      - id: a
+        uses: ./.github/actions/greet
+        with:
+          who: Halo
+
+      - id: b
+        uses: ./.github/actions/greet
+        with:
+          who: GitHub Actions
+
+      - run: |
+          echo "1回目: ${{ steps.a.outputs.message }}"
+          echo "2回目: ${{ steps.b.outputs.message }}"
