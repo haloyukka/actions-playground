@@ -12,7 +12,7 @@ jobs:
       - id: a
         uses: ./.github/actions/greet
         with:
-          who: Halo
+          who: Octocat
 
       - id: b
         uses: ./.github/actions/greet

@@ -14,7 +14,8 @@ permissions:
 
 jobs:
   welcome-issue:
-    if: github.event_name == 'issues'
+    # 進捗チェック用 Issue（progress ラベル付き）には反応しない
+    if: github.event_name == 'issues' && !contains(github.event.issue.labels.*.name, 'progress')
     runs-on: ubuntu-latest
     steps:
       - name: ラベルを付けてコメントする

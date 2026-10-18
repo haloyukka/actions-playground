@@ -38,4 +38,4 @@ Actions タブ → **L10 Reusable** → Run workflow。
 ## 🎓 修了！次の一歩
 - **Secrets / Variables**: Settings → Secrets and variables → Actions に登録して `${{ secrets.X }}` / `${{ vars.X }}` で使う
 - **クラウドへのデプロイ**: OIDC で GCP（`google-github-actions/auth`）や AWS（`aws-actions/configure-aws-credentials`）にキー無しで認証
-- **自分の既存リポジトリに導入**: event-post-gen の Lint、cabinet 系の定期取り込み など
+- **自分の既存リポジトリに導入**: 普段のプロジェクトに Lesson 03〜04 の CI を足すところから始めるのがおすすめ

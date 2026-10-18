@@ -12,7 +12,7 @@ jobs:
       - id: a
         uses: TODO # .github/actions/greet を使う
         with:
-          who: Halo
+          who: Octocat
 
       - id: b
         uses: TODO

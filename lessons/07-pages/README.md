@@ -9,7 +9,7 @@
 
 ## 見本を動かす
 Actions タブ → **L07 Deploy Pages** → Run workflow。
-完了すると deploy ジョブに公開URL（`https://haloyukka.github.io/actions-playground/`）が出ます。
+完了すると deploy ジョブに公開URL（`https://<ユーザー名>.github.io/<リポジトリ名>/`）が出ます。
 
 見本: [`.github/workflows/l07-pages.yml`](../../.github/workflows/l07-pages.yml)
 ビルド: [`scripts/build_site.mjs`](../../scripts/build_site.mjs) が [`site/index.html`](../../site/index.html) を `dist/` に書き出す

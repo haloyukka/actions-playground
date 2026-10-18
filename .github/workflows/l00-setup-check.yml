@@ -1,0 +1,85 @@
+# Lesson 00: 環境チェック
+# テンプレートから複製したら、最初にこれを手動実行して準備ができているか確認します。
+name: L00 Setup Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+  issues: write # 進捗Issue用の progress ラベルを作るため
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 環境をチェック
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const results = [];
+            const ok = (item, detail) => results.push(["✅", item, detail]);
+            const ng = (item, detail) => results.push(["⚠️", item, detail]);
+
+            // 1. Actions が動いている（このジョブが動いた時点でOK）
+            ok("GitHub Actions", "実行できています");
+
+            // 2. 公開範囲
+            const { data: repo } = await github.rest.repos.get(context.repo);
+            if (repo.private) {
+              ng("公開範囲", "Private です。無料枠の実行時間に上限があり、Pages は有料プランが必要です");
+            } else {
+              ok("公開範囲", "Public（Actions 実行時間は無料）");
+            }
+
+            // 3. フォークではないか
+            if (repo.fork) {
+              ng("複製方法", "フォークです。schedule が動かないなど制約があるので「Use this template」での複製を推奨");
+            } else {
+              ok("複製方法", "フォークではありません");
+            }
+
+            // 4. Pages の設定（Lesson 07 用）
+            try {
+              const { data: pages } = await github.rest.repos.getPages(context.repo);
+              if (pages.build_type === "workflow") {
+                ok("Pages", "Source が GitHub Actions になっています");
+              } else {
+                ng("Pages", "Source を「GitHub Actions」に変更してください（Settings → Pages）");
+              }
+            } catch (e) {
+              ng("Pages", "未設定です。Lesson 07 の前に Settings → Pages → Source を「GitHub Actions」に");
+            }
+
+            // 5. 進捗Issue用のラベル（Issueテンプレートはラベルが存在しないと付けられない）
+            try {
+              await github.rest.issues.getLabel({ ...context.repo, name: "progress" });
+              ok("ラベル", "progress ラベルがあります");
+            } catch (e) {
+              await github.rest.issues.createLabel({
+                ...context.repo, name: "progress", color: "0e8a16", description: "学習の進捗",
+              });
+              ok("ラベル", "progress ラベルを作成しました");
+            }
+
+            // 6. 必要なファイル
+            const fs = require("fs");
+            for (const f of ["python/requirements-dev.txt", "node/package-lock.json", "site/index.html"]) {
+              fs.existsSync(f) ? ok("ファイル", f) : ng("ファイル", `${f} が見つかりません`);
+            }
+
+            const warnings = results.filter(r => r[0] !== "✅").length;
+            await core.summary
+              .addHeading("🔍 Setup Check")
+              .addTable([
+                [{ data: "", header: true }, { data: "項目", header: true }, { data: "結果", header: true }],
+                ...results,
+              ])
+              .addRaw(warnings === 0
+                ? "\n🎉 準備完了！ lessons/01-hello から始めましょう。"
+                : `\n⚠️ ${warnings} 件の確認事項があります。docs/SETUP.md を見てください。`)
+              .write();
+            for (const r of results) core.info(r.join(" "));
